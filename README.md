@@ -12,10 +12,8 @@ Dockerized Flask authentication microservice with Redis sessions, MongoDB user s
 
 `npm run start`
 
-`pipenv run python main.py`
+`pipenv run python service/main.py`
 
 # Prod
 
-`docker build -f Dockerfile -t react-auth-prod .`
-
-`docker run -it -p 80:80 --rm react-auth-prod`
+`docker-compose up -f docker/docker-compose.yml -d`

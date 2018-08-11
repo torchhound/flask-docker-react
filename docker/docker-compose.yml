@@ -1,0 +1,14 @@
+version: '3'
+services:
+  authentication:
+    build: ./flask
+    ports:
+      - "4040":"4040"
+  frontend:
+    build ./react
+    ports:
+      - "80":"80"
+  mongodb:
+    image: "mongodb:alpine"
+  redis:
+    image: "redis:alpine"
