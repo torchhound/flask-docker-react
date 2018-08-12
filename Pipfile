@@ -8,6 +8,8 @@ flask = "*"
 flask-session = "*"
 pymongo = "*"
 flask-bcrypt = "*"
+flask-jwt-extended = "*"
+redis = "*"
 
 [dev-packages]
 

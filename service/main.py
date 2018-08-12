@@ -1,30 +1,50 @@
 from flask import Flask, session, make_response, jsonify, abort, request
-from flask.ext.session import Session
-import user
+from flask_session import Session
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
+from os import getenv
+from redis import from_url
+from functools import wraps
+from user import findUser, addUser
 
 app = Flask(__name__)
-SESSION_TYPE = 'redis' #switch to external dockerized redis so other services can access
+Debug = getenv('DEBUG', True)
+SESSION_TYPE = 'redis'
+app.config['SESSION_REDIS'] = from_url('127.0.0.1:6379')
 app.config.from_object(__name__)
 Session(app)
+app.config['JWT_SECRET_KEY'] = 'super-secret' if Debug == True else os.environ['JWT_SECRET']
+jwt = JWTManager(app)
 
 def nullCheck(fn):
-  @functools.wraps(fn)
+  @wraps(fn)
   def check(*args, **kws):
     data = request.get_json()
     if not data or not 'username' or 'password' in data:
       abort(400)
   return check
-     
+
 @app.route('/auth/signup', methods=['POST'])
 @nullCheck
 def signup():
-  session['username'] =  #auth token
-  return make_response(jsonify({'status': 'User successfully created!'}), 200)
+  data = request.get_json()
+  username = data.get('username')
+  access_token = create_access_token(identity=username)
+  session['username'] = access_token
+  addUser(username, data.get('password'))
+  return make_response(jsonify({'status': 'User successfully created!', 
+    'token': access_token}), 200)
 
 @app.route('/auth/login', methods=['POST'])
 @nullCheck
 def login():
-  return session.get('key', 'not set')
+  data = request.get_json()
+  username = data.get('username')
+  access_token = create_access_token(identity=username)
+  if findUser(username, data.get('password')):
+    return make_response(jsonify({'status': 'User successfully logged in!', 
+      'token': access_token}), 200)
+  else:
+    return make_response(jsonify({'status': 'User login unsuccessful...'}), 400)    
 
 @app.route('/auth/logout', methods=['GET'])
 def logout():
@@ -34,9 +54,16 @@ def logout():
   session.pop(data.username, None)
   return make_response(jsonify({'status': 'User successfully logged out!'}), 200)
 
+@app.route('/auth/refresh', methods=['POST'])
+def refresh():
+  currentUser = get_jwt_identity()
+  newToken = create_access_token(identity=currentUser, fresh=False)
+  return make_response(jsonify({'status': 'User token refresh successful!', 
+    'token': newToken}), 200)
+
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+  return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=4040)
+  app.run(debug=Debug, host='0.0.0.0', port=4040)
