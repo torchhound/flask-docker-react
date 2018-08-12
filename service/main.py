@@ -23,9 +23,9 @@ def nullCheck(fn):
       abort(400)
   return check
 
-@app.route('/auth/signup', methods=['POST'])
+@app.route('/auth/register', methods=['POST'])
 @nullCheck
-def signup():
+def register():
   data = request.get_json()
   username = data.get('username')
   access_token = create_access_token(identity=username)
