@@ -12,7 +12,7 @@ SESSION_TYPE = 'redis'
 app.config['SESSION_REDIS'] = from_url('127.0.0.1:6379')
 app.config.from_object(__name__)
 Session(app)
-app.config['JWT_SECRET_KEY'] = 'super-secret' if Debug == True else os.environ['JWT_SECRET']
+app.config['JWT_SECRET_KEY'] = getenv('JWT_SECRET', 'highest-clearance')
 jwt = JWTManager(app)
 
 def nullCheck(fn):

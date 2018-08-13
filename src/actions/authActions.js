@@ -26,7 +26,7 @@ export const registerFailure = status => ({
 
 export function postLogin(username, password) {
   return dispatch => {
-    fetch('/auth/login:4040', {
+    fetch('/auth/login', {
       method: 'post',
       headers: {
         'Accept': 'application/json, text/plain, */*',
@@ -44,7 +44,7 @@ export function postLogin(username, password) {
 
 export function postRegister(username, password) {
   return dispatch => {
-    fetch('/auth/register:4040', {
+    fetch('/auth/register', {
       method: 'post',
       headers: {
         'Accept': 'application/json, text/plain, */*',

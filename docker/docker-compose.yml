@@ -4,8 +4,8 @@ services:
     build: 
       dockerfile: ./docker/flask/Dockerfile 
       context: ../
-    ports:
-      - 4040:4040
+    expose:
+      - 80
     links:
       - database
       - session
@@ -22,10 +22,10 @@ services:
       - MONGO_LOG_DIR=/dev/null
     volumes:
       - ./data/db:/data/db
-    ports:
-        - 27017:27017
+    expose:
+        - 27017
     command: mongod --smallfiles --logpath=/dev/null
   session:
     image: redis
-    ports:
-      - 6379:6379
+    expose:
+      - 6379
