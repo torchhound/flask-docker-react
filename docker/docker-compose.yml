@@ -1,14 +1,31 @@
 version: '3'
 services:
   authentication:
-    build: ./flask
+    build: 
+      dockerfile: ./docker/flask/Dockerfile 
+      context: ../
     ports:
-      - "4040":"4040"
+      - 4040:4040
+    links:
+      - database
+      - session
   frontend:
-    build ./react
+    build: 
+      dockerfile: ./docker/react/Dockerfile 
+      context: ../
     ports:
-      - "80":"80"
-  mongodb:
-    image: "mongodb:alpine"
-  redis:
-    image: "redis:alpine"
+      - 80:80
+  database:
+    image: mongo
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+        - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null
+  session:
+    image: redis
+    ports:
+      - 6379:6379

@@ -16,4 +16,4 @@ Dockerized Flask authentication microservice with Redis sessions, MongoDB user s
 
 # Prod
 
-`docker-compose up -f docker/docker-compose.yml -d`
+`docker-compose -f docker/docker-compose.yml up -d`
