@@ -51,7 +51,8 @@ export function postLogin(username, password) {
       },
       body: JSON.stringify({username: username, password: password})
     }).then(res => {
-        dispatch(loginSuccess(res.json().status, res.json().token, username));
+        let data = res.json();
+        dispatch(loginSuccess(data.status, data.token, username));
       })
       .catch(err => {
         dispatch(loginFailure(err.json().status));
@@ -69,7 +70,8 @@ export function postRegister(username, password) {
       },
       body: JSON.stringify({username: username, password: password})
     }).then(res => {
-        dispatch(registerSuccess(res.json().status, res.json().token, username));
+        let data = res.json();
+        dispatch(registerSuccess(data.status, data.token, username));
       })
       .catch(err => {
         dispatch(registerFailure(err.json().status));

@@ -9,7 +9,7 @@ from user import findUser, addUser
 app = Flask(__name__)
 Debug = getenv('DEBUG', True)
 SESSION_TYPE = 'redis'
-app.config['SESSION_REDIS'] = from_url('127.0.0.1:6379')
+app.config['SESSION_REDIS'] = from_url('http://session:6379')
 app.config.from_object(__name__)
 Session(app)
 app.config['JWT_SECRET_KEY'] = getenv('JWT_SECRET', 'highest-clearance')
@@ -66,4 +66,4 @@ def not_found(error):
   return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-  app.run(debug=Debug, host='0.0.0.0', port=4040)
+  app.run(debug=Debug, host='0.0.0.0', port=80)

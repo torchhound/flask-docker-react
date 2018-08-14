@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-client = MongoClient('localhost', 27017)
+client = MongoClient('database', 27017)
 db = client.main
 users = db.users
 
