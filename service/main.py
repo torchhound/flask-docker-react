@@ -46,7 +46,7 @@ def login():
   else:
     return make_response(jsonify({'status': 'User login unsuccessful...'}), 400)    
 
-@app.route('/auth/logout', methods=['GET'])
+@app.route('/auth/logout', methods=['POST'])
 def logout():
   data = request.get_json()
   if not data or not 'username' in data:

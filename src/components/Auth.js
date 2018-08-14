@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { postLogin, postRegister } from '../actions/authActions';
+import { postLogin, postRegister,
+  postLogout } from '../actions/authActions';
 
 class Auth extends Component {
   constructor(props) {
     super(props);
     this.onLoginSubmit = this.onLoginSubmit.bind(this);
     this.onRegisterSubmit = this.onRegisterSubmit.bind(this);
+    this.onLogoutSubmit = this.onLogoutSubmit.bind(this);
   }
 
   onLoginSubmit() {
@@ -32,16 +34,38 @@ class Auth extends Component {
     }
   }
 
-  render() {
-    const { registerStatus, loginStatus } = this.props;
+  onLogoutSubmit() {
+    this.props.dispatchLogout(this.props.username);
+  }
 
-    let alertDiv = '';
+  render() {
+    const { registerStatus, loginStatus, logoutStatus, loggedIn } = this.props;
+
+    let loginDiv = '';
+    let registerDiv = '';
+    let logoutDiv = '';
+    let logoutButton = '';
 
     if (registerStatus) {
-      alertDiv = <div className="uk-alert"><a className="uk-alert-close" uk-close></a><p>{registerStatus}</p></div>
-    } else if (loginStatus) {
-      alertDiv = <div className="uk-alert"><a className="uk-alert-close" uk-close></a><p>{loginStatus}</p></div>
+      registerDiv = <div className="uk-alert"><a className="uk-alert-close" uk-close></a><p>{registerStatus}</p></div>
+    }
+
+    if (loginStatus) {
+      loginDiv = <div className="uk-alert"><a className="uk-alert-close" uk-close></a><p>{loginStatus}</p></div>
     } 
+
+    if (logoutStatus) {
+      logoutDiv = <div className="uk-alert"><a className="uk-alert-close" uk-close></a><p>{logoutStatus}</p></div>
+    }
+
+    if (loggedIn) {
+      logoutButton = 
+            <div className="uk-margin">
+              <div className="uk-inline">
+                <a className="uk-width-1-1 uk-button uk-button-danger uk-button-large" onClick={this.onLogoutSubmit}>Logout</a>
+              </div>
+            </div>
+    }
 
     return (
       <div className="Auth uk-container uk-vertical-align uk-text-center uk-height-1-1 uk-width-1-2">
@@ -65,7 +89,7 @@ class Auth extends Component {
                 <a className="uk-width-1-1 uk-button uk-button-primary uk-button-large" onClick={this.onLoginSubmit}>Login</a>
               </div>
             </div>
-            {alertDiv}
+            {loginDiv}
           </form>
           <hr className="uk-divider-icon"/>
           <form className="uk-panel uk-panel-box uk-form">
@@ -92,8 +116,10 @@ class Auth extends Component {
                 <a className="uk-width-1-1 uk-button uk-button-primary uk-button-large" onClick={this.onRegisterSubmit}>Register</a>
               </div>
             </div>
-            {alertDiv}
+            {registerDiv}
           </form>
+          {logoutButton}
+          {logoutDiv}
         </div>
       </div>
     );
@@ -107,13 +133,19 @@ const mapDispatchToProps = dispatch => {
     },
     dispatchRegister: (username, password) => {
       dispatch(postRegister(username, password));
+    },
+    dispatchLogout: username => {
+      dispatch(postLogout(username));
     }
   }
 }
 
 const mapStateToProps = state => {
   return { loginStatus: state.auth.loginStatus,
-    registerStatus: state.auth.registerStatus
+    registerStatus: state.auth.registerStatus,
+    logoutStatus: state.auth.logoutStatus,
+    loggedIn: state.auth.loggedIn,
+    username: state.auth.username
   };
 }
 
