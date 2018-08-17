@@ -1,10 +1,11 @@
 from pymongo import MongoClient
 from flask import Flask
 from flask_bcrypt import Bcrypt
+import os
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-client = MongoClient('database', 27017)
+client = MongoClient('mongodb://mongo:27017') # os.environ['DB_PORT_27017_TCP_ADDR'] mongodb://database:27017
 db = client.main
 users = db.users
 
